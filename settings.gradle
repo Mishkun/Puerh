@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':puerh-core'
 rootProject.name='puerh'
