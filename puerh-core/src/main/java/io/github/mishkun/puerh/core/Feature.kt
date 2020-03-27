@@ -34,8 +34,11 @@ class SyncFeature<Msg : Any, Model : Any, Eff : Any>(
         }
     }
 
-    override fun listenState(listener: (state: Model) -> Unit): Cancelable =
-        stateListeners.addListenerAndMakeCancelable(listener)
+    override fun listenState(listener: (state: Model) -> Unit): Cancelable {
+        val cancelable = stateListeners.addListenerAndMakeCancelable(listener)
+        listener(currentState)
+        return cancelable
+    }
 
     override fun listenEffect(listener: (eff: Eff) -> Unit): Cancelable =
         effListeners.addListenerAndMakeCancelable(listener)
@@ -70,8 +73,11 @@ class AndroidHandlerFeature<Msg : Any, Model : Any, Eff : Any>(
         }
     }
 
-    override fun listenState(listener: (state: Model) -> Unit): Cancelable =
-        stateListeners.addListenerAndMakeCancelable(listener)
+    override fun listenState(listener: (state: Model) -> Unit): Cancelable {
+        val cancelable = stateListeners.addListenerAndMakeCancelable(listener)
+        listener(currentState)
+        return cancelable
+    }
 
     override fun listenEffect(listener: (eff: Eff) -> Unit): Cancelable =
         effListeners.addListenerAndMakeCancelable(listener)
