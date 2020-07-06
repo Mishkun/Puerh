@@ -65,3 +65,5 @@ lint/tmp/
 .idea/misc.xml
 .idea/encodings.xml
 .idea/codeStyles/codeStyleConfig.xml
+/.idea/jarRepositories.xml
+/.idea/.name
