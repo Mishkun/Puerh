@@ -32,22 +32,22 @@ jobs:
         run: ./gradlew lint
 
       - uses: actions/upload-artifact@v2
-          with:
-            name: lint-report.html
-            path: app/build/reports/lint-results.html
+        with:
+          name: lint-report.html
+          path: app/build/reports/lint-results.html
 
       - name: Run lint check
         run: ./gradlew lint
 
       - uses: actions/upload-artifact@v2
-          with:
-            name: test-results.html
-            path: "*/build/reports/lint-results.html"
+        with:
+          name: test-results.html
+          path: "*/build/reports/lint-results.html"
 
       - name: Run tests
         run: ./gradlew test
 
       - uses: actions/upload-artifact@v2
-          with:
-            name: test-results.html
-            path: "*/build/reports/tests/testDebugUnitTest/**"
+        with:
+          name: test-results.html
+          path: "*/build/reports/tests/testDebugUnitTest/**"
