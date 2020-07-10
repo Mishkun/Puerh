@@ -1,4 +1,6 @@
 import com.android.build.gradle.BaseExtension
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.get
 
 fun BaseExtension.prepare() {
@@ -25,4 +27,15 @@ fun BaseExtension.prepare() {
     }
 
     sourceSets["main"].java.srcDir("src/main/kotlin")
+}
+
+fun DependencyHandlerScope.kotest() {
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:4.1.1")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:4.1.1")
+    testImplementation("io.kotest:kotest-property-jvm:4.1.1")
+    testImplementation("io.kotest:kotest-runner-console-jvm:4.1.1")
+}
+
+fun DependencyHandlerScope.testImplementation(dependency: String) {
+    add("testImplementation", dependency)
 }
