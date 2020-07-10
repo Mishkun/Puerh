@@ -5,6 +5,12 @@ plugins {
 
 android.prepare()
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation(kotlin("stdlib"))
+    kotest()
 }
+

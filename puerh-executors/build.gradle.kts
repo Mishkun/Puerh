@@ -5,7 +5,12 @@ plugins {
 
 android.prepare()
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":puerh-core"))
+    kotest()
 }
