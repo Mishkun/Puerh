@@ -1,5 +1,8 @@
+import com.android.build.api.dsl.UnitTestOptions
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.internal.dsl.TestOptions
 import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.delegateClosureOf
 import org.gradle.kotlin.dsl.get
 
 fun BaseExtension.prepare() {
@@ -22,6 +25,12 @@ fun BaseExtension.prepare() {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+
+    testOptions {
+        unitTests.delegateClosureOf<TestOptions.UnitTestOptions> {
+            isIncludeAndroidResources = true
         }
     }
 
