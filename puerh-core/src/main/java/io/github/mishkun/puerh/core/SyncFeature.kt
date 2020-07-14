@@ -9,10 +9,13 @@ class SyncFeature<Msg : Any, Model : Any, Eff : Any>(
 ) : Feature<Msg, Model, Eff> {
     override var currentState: Model = initialState
         private set
+
+    private var isCanceled = false
     private val stateListeners = mutableListOf<(state: Model) -> Unit>()
     private val effListeners = mutableListOf<(eff: Eff) -> Unit>()
 
     override fun accept(msg: Msg) {
+        if (isCanceled) return
         val (newState, commands) = reducer(msg, currentState)
         currentState = newState
         stateListeners.notifyAll(newState)
@@ -29,4 +32,8 @@ class SyncFeature<Msg : Any, Model : Any, Eff : Any>(
 
     override fun listenEffect(listener: (eff: Eff) -> Unit): Cancelable =
         effListeners.addListenerAndMakeCancelable(listener)
+
+    override fun cancel() {
+        isCanceled = true
+    }
 }

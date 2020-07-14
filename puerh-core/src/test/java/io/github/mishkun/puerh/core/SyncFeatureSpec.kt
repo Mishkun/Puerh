@@ -71,6 +71,30 @@ class SyncFeatureSpec : FreeSpec({
             effects should beEmpty()
         }
     }
+    "describe feature disposal" - {
+        "it should not get any effects after calling cancel method" {
+            val testFeature = createTestFeature()
+            val effects = mutableListOf<SyncTestFeature.Eff>()
+            val subscriber: (SyncTestFeature.Eff) -> Unit = { effects.add(it) }
+
+            testFeature.listenEffect(subscriber)
+            testFeature.cancel()
+            testFeature.accept(SyncTestFeature.Msg)
+
+            effects should beEmpty()
+        }
+        "it should not get any new states after calling cancel method" {
+            val testFeature = createTestFeature()
+            val states = mutableListOf<SyncTestFeature.State>()
+            val subscriber: (SyncTestFeature.State) -> Unit = { states.add(it) }
+
+            testFeature.listenState(subscriber)
+            testFeature.cancel()
+            testFeature.accept(SyncTestFeature.Msg)
+
+            states should containExactly(SyncTestFeature.State(0))
+        }
+    }
 })
 
 private fun createTestFeature() = SyncFeature(SyncTestFeature.State(0), SyncTestFeature::reducer)
