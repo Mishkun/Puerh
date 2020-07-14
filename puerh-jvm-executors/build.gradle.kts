@@ -22,5 +22,4 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":puerh-core"))
     kotest()
-    testImplementation("io.kotest:kotest-extensions-robolectric-jvm:4.0.1")
 }
