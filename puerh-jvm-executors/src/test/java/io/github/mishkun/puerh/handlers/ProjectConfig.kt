@@ -1,4 +1,4 @@
-package io.github.mishkun.puerh.interpreter
+package io.github.mishkun.puerh.handlers
 
 import io.kotest.core.config.AbstractProjectConfig
 import io.kotest.core.extensions.Extension

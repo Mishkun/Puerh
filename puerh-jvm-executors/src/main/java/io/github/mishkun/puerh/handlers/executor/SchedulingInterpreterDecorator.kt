@@ -1,4 +1,4 @@
-package io.github.mishkun.puerh.interpreter.executor
+package io.github.mishkun.puerh.handlers.executor
 
 import android.os.Handler
 import android.os.Looper

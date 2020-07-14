@@ -1,2 +1,2 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.github.mishkun.puerh.interpreter.executor" />
+    package="io.github.mishkun.puerh.handlers.executor" />
