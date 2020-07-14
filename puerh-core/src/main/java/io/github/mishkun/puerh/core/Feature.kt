@@ -1,6 +1,6 @@
 package io.github.mishkun.puerh.core
 
-interface Feature<Msg : Any, Model : Any, Eff : Any> {
+interface Feature<Msg : Any, Model : Any, Eff : Any> : Cancelable {
     val currentState: Model
     fun accept(msg: Msg)
     fun listenState(listener: (model: Model) -> Unit): Cancelable
