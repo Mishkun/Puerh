@@ -44,6 +44,19 @@ fun DependencyHandlerScope.kotest() {
     testImplementation("io.kotest:kotest-runner-console-jvm:4.1.1")
 }
 
+fun DependencyHandlerScope.inkremental() {
+    val latestRelease = "0.12"
+    implementation("dev.inkremental:anvil-sdk:21-$latestRelease")
+    implementation("dev.inkremental:anvil-sdk:21-$latestRelease")
+    implementation("dev.inkremental:anvil-support-v4:1.1.0-$latestRelease")
+    implementation("dev.inkremental:anvil-appcompat-v7:1.1.0-$latestRelease")
+    implementation("dev.inkremental:anvil-recyclerview-v7:1.1.0-$latestRelease")
+}
+
 fun DependencyHandlerScope.testImplementation(dependency: String) {
     add("testImplementation", dependency)
+}
+
+fun DependencyHandlerScope.implementation(dependency: String) {
+    add("implementation", dependency)
 }
