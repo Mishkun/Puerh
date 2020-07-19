@@ -4,8 +4,10 @@ import io.github.mishkun.puerh.core.EffectHandler
 import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 
+typealias ExecutorEffectsInterpreter<Eff, Msg> = ExecutorService.(eff: Eff, listener: (Msg) -> Unit) -> Unit
+
 class ExecutorEffectHandler<Msg : Any, Eff : Any>(
-    private val effectsInterpreter: ExecutorService.(eff: Eff, listener: (Msg) -> Unit) -> Unit,
+    private val effectsInterpreter: ExecutorEffectsInterpreter<Eff, Msg>,
     private val callerThreadExecutor: Executor,
     private val effectsExecutorService: ExecutorService
 ) : EffectHandler<Eff, Msg> {

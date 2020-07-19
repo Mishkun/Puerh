@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import dev.inkremental.Inkremental
 import dev.inkremental.renderableContentView
-import io.github.mishkun.puerh.sampleapp.backstack.logic.BackstackFeature
-import io.github.mishkun.puerh.sampleapp.backstack.ui.BackstackScreen
+import io.github.mishkun.puerh.sampleapp.toplevel.logic.TopLevelFeature
+import io.github.mishkun.puerh.sampleapp.toplevel.ui.TopLevelScreen
 
 class MainActivity : AppCompatActivity() {
     private val feature
@@ -13,20 +13,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        feature.listenState { _ ->
+        feature.listenState {
             Inkremental.render()
         }
         feature.listenEffect(this::handleEffect)
         renderableContentView {
-            BackstackScreen(feature.currentState, feature::accept)
+            TopLevelScreen(feature.currentState, feature::accept)
         }
     }
 
-    private fun handleEffect(eff: BackstackFeature.Eff) = when (eff) {
-        BackstackFeature.Eff.Finish -> onBackPressedDispatcher.onBackPressed()
+    private fun handleEffect(eff: TopLevelFeature.Eff) = when (eff) {
+        TopLevelFeature.Eff.Finish -> onBackPressedDispatcher.onBackPressed()
+        else -> Unit
     }
 
     override fun onBackPressed() {
-        feature.accept(BackstackFeature.Msg.OnBack)
+        feature.accept(TopLevelFeature.Msg.OnBack)
     }
 }
