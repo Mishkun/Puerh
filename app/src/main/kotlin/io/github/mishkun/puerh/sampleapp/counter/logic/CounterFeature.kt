@@ -1,8 +1,8 @@
-package io.github.mishkun.puerh.sampleapp.logic
+package io.github.mishkun.puerh.sampleapp.counter.logic
 
-typealias ReducerResult = Pair<TopLevelFeature.State, Set<TopLevelFeature.Eff>>
+typealias ReducerResult = Pair<CounterFeature.State, Set<CounterFeature.Eff>>
 
-object TopLevelFeature {
+object CounterFeature {
     fun initialState(): State = State(1, null)
 
     fun initialEffects(): Set<Eff> = setOf(Eff.GenerateRandomCounterChange)

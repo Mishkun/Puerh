@@ -1,4 +1,3 @@
-import com.android.build.api.dsl.UnitTestOptions
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.dsl.TestOptions
 import org.gradle.kotlin.dsl.DependencyHandlerScope
@@ -51,6 +50,8 @@ fun DependencyHandlerScope.inkremental() {
     implementation("dev.inkremental:anvil-support-v4:1.1.0-$latestRelease")
     implementation("dev.inkremental:anvil-appcompat-v7:1.1.0-$latestRelease")
     implementation("dev.inkremental:anvil-recyclerview-v7:1.1.0-$latestRelease")
+    implementation("dev.inkremental:anvil-design:1.1.0-$latestRelease")
+    implementation("com.google.android.material:material:1.1.0")
 }
 
 fun DependencyHandlerScope.testImplementation(dependency: String) {

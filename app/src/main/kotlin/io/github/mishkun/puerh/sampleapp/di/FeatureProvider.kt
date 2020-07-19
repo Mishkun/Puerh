@@ -7,10 +7,13 @@ import io.github.mishkun.puerh.core.Feature
 import io.github.mishkun.puerh.core.SyncFeature
 import io.github.mishkun.puerh.core.wrapWithEffectHandler
 import io.github.mishkun.puerh.handlers.executor.ExecutorEffectHandler
-import io.github.mishkun.puerh.sampleapp.data.randomEffectInterpreter
-import io.github.mishkun.puerh.sampleapp.logic.TopLevelFeature
+import io.github.mishkun.puerh.handlers.executor.ExecutorEffectsInterpreter
+import io.github.mishkun.puerh.sampleapp.backstack.logic.BackstackFeature
+import io.github.mishkun.puerh.sampleapp.backstack.logic.NavGraph
+import io.github.mishkun.puerh.sampleapp.backstack.logic.SCREEN_NAMES
+import io.github.mishkun.puerh.sampleapp.counter.data.randomEffectInterpreter
+import io.github.mishkun.puerh.sampleapp.toplevel.logic.TopLevelFeature
 import java.util.concurrent.Executor
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 fun provideFeature(applicationContext: Context): Feature<TopLevelFeature.Msg, TopLevelFeature.State, TopLevelFeature.Eff> {
@@ -22,13 +25,34 @@ fun provideFeature(applicationContext: Context): Feature<TopLevelFeature.Msg, To
     }
     val ioPool = Executors.newCachedThreadPool()
 
-    return SyncFeature(TopLevelFeature.initialState(), TopLevelFeature::reducer)
-        .wrapWithEffectHandler(
-            ExecutorEffectHandler(
-                { eff, listener -> randomEffectInterpreter(eff, listener) },
-                androidMainThreadExecutor,
-                ioPool
-            ),
-            TopLevelFeature.initialEffects()
+    return SyncFeature(
+        TopLevelFeature.initialState(
+            backstackFeatureState = BackstackFeature.initialState(
+                SCREEN_NAMES.first(),
+                generateScreenGraph()
+            )
+        ),
+        TopLevelFeature::reducer
+    ).wrapWithEffectHandler(
+        ExecutorEffectHandler(
+            adaptedRandomEffectInterpreter,
+            androidMainThreadExecutor,
+            ioPool
         )
+    )
+}
+
+private val adaptedRandomEffectInterpreter: ExecutorEffectsInterpreter<TopLevelFeature.Eff, TopLevelFeature.Msg> =
+    { eff, listener ->
+        if (eff is TopLevelFeature.Eff.CounterEff) randomEffectInterpreter(eff.eff) {
+            listener(TopLevelFeature.Msg.CounterMsg(it))
+        }
+    }
+
+private fun generateScreenGraph(): NavGraph {
+    val nameTriples = SCREEN_NAMES.shuffled().zipWithNext().zip(SCREEN_NAMES)
+    return nameTriples.associate { (shuffled, name3) ->
+        val (name1, name2) = shuffled
+        name1 to (name2 to name3)
+    }
 }
