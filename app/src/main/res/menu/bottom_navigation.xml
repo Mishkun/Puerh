@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_counter"
+        android:icon="@drawable/ic_baseline_counter_24"
+        android:title="Counter" />
+
+    <item
+        android:id="@+id/navigation_backstack"
+        android:icon="@drawable/ic_baseline_backstack_24"
+        android:title="Backstack" />
+
+    <item
+        android:id="@+id/navigation_translate"
+        android:icon="@drawable/ic_baseline_translate_24"
+        android:title="Translate" />
+
+</menu>

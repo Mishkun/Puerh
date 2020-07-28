@@ -1,18 +1,16 @@
 package io.github.mishkun.puerh.sampleapp.toplevel.ui
 
-import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.FrameLayout
-import android.widget.LinearLayout
+import android.graphics.Color
 import android.widget.LinearLayout.VERTICAL
-import com.google.android.material.tabs.TabLayout
-import dev.inkremental.dsl.android.*
-import dev.inkremental.dsl.android.widget.button
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import dev.inkremental.dsl.android.BOTTOM
+import dev.inkremental.dsl.android.init
+import dev.inkremental.dsl.android.weight
 import dev.inkremental.dsl.android.widget.frameLayout
 import dev.inkremental.dsl.android.widget.linearLayout
-import dev.inkremental.dsl.android.widget.textView
-import dev.inkremental.dsl.google.android.material.tabs.tabItem
-import dev.inkremental.dsl.google.android.material.tabs.tabLayout
+import dev.inkremental.dsl.google.android.material.bottomnavigation.bottomNavigationView
+import dev.inkremental.dsl.google.android.material.inflateMenu
+import io.github.mishkun.puerh.R
 import io.github.mishkun.puerh.sampleapp.backstack.ui.BackstackScreen
 import io.github.mishkun.puerh.sampleapp.counter.ui.CounterScreen
 import io.github.mishkun.puerh.sampleapp.toplevel.logic.TopLevelFeature
@@ -35,17 +33,20 @@ fun TopLevelScreen(
         }
     }
 
-    linearLayout {
+    bottomNavigationView {
+        backgroundColor(Color.WHITE)
+        inflateMenu(R.menu.bottom_navigation)
+        init { view ->
+            val nav = view as BottomNavigationView
+            nav.setOnNavigationItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.navigation_counter -> listener(TopLevelFeature.Msg.OnCounterScreenSwitch)
+                    R.id.navigation_backstack -> listener(TopLevelFeature.Msg.OnBackstackScreenSwitch)
+                    R.id.navigation_translate -> return@setOnNavigationItemSelectedListener false
+                }
+                true
+            }
+        }
         gravity(BOTTOM)
-        button {
-            weight(1f)
-            text("Counter")
-            onClick { listener(TopLevelFeature.Msg.OnCounterScreenSwitch) }
-        }
-        button {
-            weight(1f)
-            text("Backstack")
-            onClick { listener(TopLevelFeature.Msg.OnBackstackScreenSwitch) }
-        }
     }
 }
