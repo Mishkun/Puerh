@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.mishkun.puerh">
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name=".sampleapp.MyApplication"
         android:allowBackup="true"
@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".sampleapp.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

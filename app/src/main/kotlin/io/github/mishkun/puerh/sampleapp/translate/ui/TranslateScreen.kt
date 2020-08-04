@@ -1,6 +1,7 @@
 package io.github.mishkun.puerh.sampleapp.translate.ui
 
-import android.R
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout.HORIZONTAL
 import android.widget.LinearLayout.VERTICAL
@@ -30,7 +31,7 @@ fun TranslateScreen(
         orientation(HORIZONTAL)
 
         val languages = translateState.languagesState.availableLanguages.map { it.displayName }
-        languagesSpinner(languages) { item ->
+        languagesSpinner(listOf("Auto") + languages) { item ->
             val lang = translateState.languagesState.availableLanguages.find {
                 it.displayName == item
             }
@@ -54,12 +55,21 @@ private fun languagesSpinner(
             v as Spinner
             v.adapter = ArrayAdapter(
                 v.context,
-                R.layout.simple_spinner_item,
-                listOf("Auto") + languages
+                android.R.layout.simple_spinner_item,
+                languages
             )
-            v.setOnItemClickListener { adapterView, view, i, l ->
-                val item = adapterView.getItemAtPosition(i).toString()
-                listener(item)
+            v.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapterView: AdapterView<*>,
+                    view: View?,
+                    i: Int,
+                    l: Long
+                ) {
+                    val item = adapterView.getItemAtPosition(i).toString()
+                    listener(item)
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
         }
     }

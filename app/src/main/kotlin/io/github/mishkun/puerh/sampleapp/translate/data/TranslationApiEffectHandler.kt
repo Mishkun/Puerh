@@ -20,7 +20,7 @@ val BASE_URL =
 
 @Serializable
 private data class TranslationApiRequest(
-    val source: String?,
+    val source: String? = null,
     val target: String?,
     val text: List<String>
 )
@@ -53,7 +53,7 @@ class TranslationApiEffectHandler(
                 Thread.sleep(300)
                 val result = BASE_URL.httpPost()
                     .authentication()
-                    .basic(username = "apiKey", password = BuildConfig.API_KEY)
+                    .basic(username = "apikey", password = BuildConfig.API_KEY)
                     .jsonBody(
                         json.stringify(
                             TranslationApiRequest.serializer(),
@@ -64,7 +64,7 @@ class TranslationApiEffectHandler(
                             )
                         )
                     )
-                    .responseString().let { (_, _, result) ->
+                    .responseString().let { (first, second, result) ->
                         result.map { value ->
                             json.fromJson(
                                 TranslationApiResult.serializer(),

@@ -15,6 +15,7 @@ import io.github.mishkun.puerh.sampleapp.backstack.ui.BackstackScreen
 import io.github.mishkun.puerh.sampleapp.counter.ui.CounterScreen
 import io.github.mishkun.puerh.sampleapp.toplevel.logic.TopLevelFeature
 import io.github.mishkun.puerh.sampleapp.toplevel.logic.TopLevelFeature.State.ScreenState
+import io.github.mishkun.puerh.sampleapp.translate.ui.TranslateScreen
 
 fun TopLevelScreen(
     state: TopLevelFeature.State,
@@ -30,6 +31,9 @@ fun TopLevelScreen(
             is ScreenState.Backstack -> BackstackScreen(
                 screen.state
             ) { listener(TopLevelFeature.Msg.BackstackMsg(it)) }
+            is ScreenState.Translate -> TranslateScreen(
+                screen.state
+            ) { listener(TopLevelFeature.Msg.TranslateMsg(it)) }
         }
     }
 
@@ -42,7 +46,7 @@ fun TopLevelScreen(
                 when (item.itemId) {
                     R.id.navigation_counter -> listener(TopLevelFeature.Msg.OnCounterScreenSwitch)
                     R.id.navigation_backstack -> listener(TopLevelFeature.Msg.OnBackstackScreenSwitch)
-                    R.id.navigation_translate -> return@setOnNavigationItemSelectedListener false
+                    R.id.navigation_translate -> listener(TopLevelFeature.Msg.OnTranslateScreenSwitch)
                 }
                 true
             }

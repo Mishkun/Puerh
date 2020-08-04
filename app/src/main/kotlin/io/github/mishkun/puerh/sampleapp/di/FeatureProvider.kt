@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import io.github.mishkun.puerh.core.Feature
 import io.github.mishkun.puerh.core.SyncFeature
+import io.github.mishkun.puerh.core.adapt
 import io.github.mishkun.puerh.core.wrapWithEffectHandler
 import io.github.mishkun.puerh.handlers.executor.ExecutorEffectHandler
 import io.github.mishkun.puerh.handlers.executor.ExecutorEffectsInterpreter
@@ -13,6 +14,8 @@ import io.github.mishkun.puerh.sampleapp.backstack.logic.NavGraph
 import io.github.mishkun.puerh.sampleapp.backstack.logic.SCREEN_NAMES
 import io.github.mishkun.puerh.sampleapp.counter.data.randomEffectInterpreter
 import io.github.mishkun.puerh.sampleapp.toplevel.logic.TopLevelFeature
+import io.github.mishkun.puerh.sampleapp.translate.data.TranslationApiEffectHandler
+import kotlinx.serialization.json.Json
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -38,6 +41,18 @@ fun provideFeature(applicationContext: Context): Feature<TopLevelFeature.Msg, To
             adaptedRandomEffectInterpreter,
             androidMainThreadExecutor,
             ioPool
+        )
+    ).wrapWithEffectHandler<TopLevelFeature.Msg, TopLevelFeature.State, TopLevelFeature.Eff>(
+        TranslationApiEffectHandler(
+            Json {
+                ignoreUnknownKeys = true
+                encodeDefaults = false
+            },
+            androidMainThreadExecutor,
+            ioPool
+        ).adapt(
+            effAdapter = { (it as? TopLevelFeature.Eff.TranslateEff)?.eff },
+            msgAdapter = { TopLevelFeature.Msg.TranslateMsg(it) }
         )
     )
 }

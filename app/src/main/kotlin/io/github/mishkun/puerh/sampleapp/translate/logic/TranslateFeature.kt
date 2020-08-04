@@ -64,7 +64,7 @@ object TranslateFeature {
         ) : Eff()
     }
 
-    fun reduce(msg: Msg, state: State): ReducerResult = when (msg) {
+    fun reducer(msg: Msg, state: State): ReducerResult = when (msg) {
         is Msg.OnTextInput -> {
             val eff = state.languagesState.toTranslateTextEff(msg.input)
             val newState = state.copy(inputText = msg.input, isLoading = true)
