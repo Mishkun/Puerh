@@ -12,6 +12,7 @@ object TranslateFeature {
         inputText = "",
         translatedText = "",
         isLoading = false,
+        errorMessage = null,
         languagesState = State.LanguagesState(
             availableLanguages = Language.values().toList(),
             selectedFrom = SelectedLanguage.Auto,
@@ -23,6 +24,7 @@ object TranslateFeature {
         val inputText: String,
         val translatedText: String,
         val languagesState: LanguagesState,
+        val errorMessage: String?,
         val isLoading: Boolean
     ) {
         data class LanguagesState(
@@ -45,14 +47,14 @@ object TranslateFeature {
 
     sealed class Msg {
         data class OnTextInput(val input: String) : Msg()
+        data class OnLanguageFromChange(val language: Language?) : Msg()
+        data class OnLanguageToChange(val language: Language) : Msg()
+        object OnLanguageSwapClick : Msg()
+
         data class OnTranslationResult(
             val translatedText: String,
             val detectedLanguage: Language?
         ) : Msg()
-
-        data class OnLanguageFromChange(val language: Language?) : Msg()
-        data class OnLanguageToChange(val language: Language) : Msg()
-
         data class OnTranslationError(val apiError: ApiError) : Msg()
     }
 
@@ -71,15 +73,19 @@ object TranslateFeature {
             newState to setOf(eff)
         }
         is Msg.OnTranslationError -> {
-            val newState = state.copy(isLoading = false)
+            val newState = state.copy(isLoading = false, errorMessage = msg.apiError.message)
             newState to emptySet()
         }
         is Msg.OnTranslationResult -> {
+            val newFromLanguage = when (val oldFrom = state.languagesState.selectedFrom) {
+                is SelectedLanguage.Concrete -> oldFrom
+                is SelectedLanguage.Auto -> SelectedLanguage.fromLanguage(msg.detectedLanguage)
+            }
             val newState = state.copy(
                 isLoading = false,
                 translatedText = msg.translatedText,
                 languagesState = state.languagesState.copy(
-                    selectedFrom = SelectedLanguage.fromLanguage(msg.detectedLanguage)
+                    selectedFrom = newFromLanguage
                 )
             )
             newState to emptySet()
@@ -101,6 +107,21 @@ object TranslateFeature {
                 )
             )
             newState to setOf(newState.languagesState.toTranslateTextEff(state.inputText))
+        }
+        is Msg.OnLanguageSwapClick -> when (state.languagesState.selectedFrom) {
+            is SelectedLanguage.Concrete -> {
+                val newState = state.copy(
+                    isLoading = true,
+                    inputText = state.translatedText,
+                    translatedText = state.inputText,
+                    languagesState = state.languagesState.copy(
+                        selectedFrom = SelectedLanguage.fromLanguage(state.languagesState.selectedTo),
+                        selectedTo = state.languagesState.selectedFrom.language
+                    )
+                )
+                newState to setOf(newState.languagesState.toTranslateTextEff(newState.inputText))
+            }
+            else -> state to emptySet()
         }
     }
 

@@ -9,6 +9,7 @@ import io.github.mishkun.puerh.core.EffectHandler
 import io.github.mishkun.puerh.sampleapp.translate.logic.ApiError
 import io.github.mishkun.puerh.sampleapp.translate.logic.Language
 import io.github.mishkun.puerh.sampleapp.translate.logic.TranslateFeature
+import io.github.mishkun.puerh.sampleapp.util.nullIfBlank
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.util.concurrent.Executor
@@ -49,45 +50,47 @@ class TranslationApiEffectHandler(
     override fun handleEffect(eff: TranslateFeature.Eff) {
         translateApiFuture?.cancel(true)
         translateApiFuture = when (eff) {
-            is TranslateFeature.Eff.TranslateText -> effectsExecutorService.submit {
-                Thread.sleep(300)
-                val result = BASE_URL.httpPost()
-                    .authentication()
-                    .basic(username = "apikey", password = BuildConfig.API_KEY)
-                    .jsonBody(
-                        json.stringify(
-                            TranslationApiRequest.serializer(),
-                            TranslationApiRequest(
-                                eff.languageCodeFrom,
-                                eff.languageCodeTo,
-                                listOf(eff.text)
+            is TranslateFeature.Eff.TranslateText -> eff.text.nullIfBlank()?.let {
+                effectsExecutorService.submit {
+                    Thread.sleep(300)
+                    val result = BASE_URL.httpPost()
+                        .authentication()
+                        .basic(username = "apikey", password = BuildConfig.API_KEY)
+                        .jsonBody(
+                            json.stringify(
+                                TranslationApiRequest.serializer(),
+                                TranslationApiRequest(
+                                    eff.languageCodeFrom,
+                                    eff.languageCodeTo,
+                                    listOf(eff.text)
+                                )
                             )
                         )
-                    )
-                    .responseString().let { (first, second, result) ->
-                        result.map { value ->
-                            json.fromJson(
-                                TranslationApiResult.serializer(),
-                                json.parseJson(value)
-                            )
+                        .responseString().let { (first, second, result) ->
+                            result.map { value ->
+                                json.fromJson(
+                                    TranslationApiResult.serializer(),
+                                    json.parseJson(value)
+                                )
+                            }
                         }
-                    }
-                val msg = result.fold(success = { res ->
-                    TranslateFeature.Msg.OnTranslationResult(
-                        res.translations.first().translation,
-                        detectedLanguage = res.detectedLanguage?.let { code ->
-                            Language.values().find { it.code == code }
-                        }
-                    )
-                }, failure = { fail ->
-                    TranslateFeature.Msg.OnTranslationError(
-                        ApiError(
-                            fail.response.statusCode,
-                            fail.message
+                    val msg = result.fold(success = { res ->
+                        TranslateFeature.Msg.OnTranslationResult(
+                            res.translations.first().translation,
+                            detectedLanguage = res.detectedLanguage?.let { code ->
+                                Language.values().find { it.code == code }
+                            }
                         )
-                    )
-                })
-                callerThreadExecutor.execute { listener?.invoke(msg) }
+                    }, failure = { fail ->
+                        TranslateFeature.Msg.OnTranslationError(
+                            ApiError(
+                                fail.response.statusCode,
+                                fail.message
+                            )
+                        )
+                    })
+                    callerThreadExecutor.execute { listener?.invoke(msg) }
+                }
             }
         }
     }
